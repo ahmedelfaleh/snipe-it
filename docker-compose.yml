@@ -12,7 +12,7 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./ssl:/etc/nginx/certs
     environment:
-      - DEFAULT_HOST=assets.fts.work
+      - DEFAULT_HOST=<YOURDOMAIN.TLD>
     networks:
       - host
     
@@ -39,7 +39,7 @@ services:
     depends_on:
       - snipe-mysql
     environment:
-      - VIRTUAL_HOST=assets.fts.work
+      - VIRTUAL_HOST=<YOURDOMAIN.TLD>
     networks:
       - host
 
