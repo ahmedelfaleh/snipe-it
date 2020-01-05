@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+  nginx_proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx_proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./ssl:/etc/nginx/certs
+    environment:
+      - DEFAULT_HOST=assets.fts.work
+    networks:
+      - host
+    
+  snipe-mysql:
+    container_name: snipe-mysql
+    image: mysql:5.6
+    restart: always
+    env_file:
+      - ./.env
+    volumes:
+      - snipesql-vol:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    expose:
+      - "3306"
+    networks:
+      - host
+
+  snipe-it:
+    image: snipe/snipe-it:v1.0
+    container_name: snipe-it
+    restart: always
+    env_file:
+      - ./.env
+    depends_on:
+      - snipe-mysql
+    environment:
+      - VIRTUAL_HOST=assets.fts.work
+    networks:
+      - host
+
+#  postfix:
+#    container_name: mail
+#    image: juanluisbaptiste/postfix:latest
+#    ports:
+#      - "25:25"
+#    env_file:
+#      - ./credentials-smtp.env
+#    restart: always
+#    volumes:
+#      - "/etc/localtime:/etc/localtime:ro"
+#    networks:
+#      - host
+
+
+volumes:
+  snipesql-vol:
+  snipe-vol:
+networks:
+  host:
